@@ -1,0 +1,1 @@
+scenario,steps,average runtime_plan [s],runtime history [s],num_trajs_generated,num_trajs_validated,num_collision_checks,average_cost,max_cost,final_trajector_cost, step_number_for_break, num_FOP_intervence_for_SP, Percent_FOP_Intervence, success
