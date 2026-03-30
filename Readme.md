@@ -1,5 +1,6 @@
 ## How to buid
-python3.10 -m venv TestVenv
+```bash
+python3.10 -m venv MyVenv
 source TestVenv/bin/activate
 pip install poetry
 poetry install
