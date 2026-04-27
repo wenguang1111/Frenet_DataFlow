@@ -1,4 +1,7 @@
 #include "Frenet_Planner.h"
+#ifdef USE_BERNSTEIN_NORMALIZATION
+#include "common/geometry/bernstein_polynomial.h"
+#endif
 #include "common/collision/collision_checker.h"
 #include "Recorder4Cpp/recorder.h"
 #include <algorithm>
@@ -108,9 +111,14 @@ std::vector<FrenetTrajectory> Frenet_Planner::calc_frenet_paths(const FrenetStat
         FrenetTrajectory fp;
         
         // Lateral trajectory using quintic polynomial
+#ifdef USE_BERNSTEIN_NORMALIZATION
+        QuinticPolynomial_Bernstein<double> lat_qp(frenet_state.d, frenet_state.d_d, frenet_state.d_dd,
+                                                   di, 0.0, 0.0, Ti);
+#else
         QuinticPolynomial lat_qp(frenet_state.d, frenet_state.d_d, frenet_state.d_dd,
                                  di, 0.0f, 0.0f, Ti);
-        
+#endif
+
         // Generate time steps
         for (double t = 0.0; t < Ti; t += settings.tick_t) {
             fp.t.push_back(t);
@@ -119,11 +127,16 @@ std::vector<FrenetTrajectory> Frenet_Planner::calc_frenet_paths(const FrenetStat
             fp.d_dd.push_back(lat_qp.calc_second_derivative(t));
             fp.d_ddd.push_back(lat_qp.calc_third_derivative(t));
         }
-        
+
         // Longitudinal trajectory using quartic polynomial
+#ifdef USE_BERNSTEIN_NORMALIZATION
+        QuarticPolynomial_Bernstein<double> lon_qp(frenet_state.s, frenet_state.s_d, frenet_state.s_dd,
+                                                   tv, 0.0, Ti);
+#else
         QuarticPolynomial lon_qp(frenet_state.s, frenet_state.s_d, frenet_state.s_dd,
                                  tv, 0.0f, Ti);
-        
+#endif
+
         for (size_t i = 0; i < fp.t.size(); i++) {
             double t = fp.t[i];
             fp.s.push_back(lon_qp.calc_point(t));

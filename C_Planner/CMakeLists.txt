@@ -35,6 +35,12 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${EIGEN3_INCLUDE_DIR})
 include_directories(${Python3_INCLUDE_DIRS})
 
+option(USE_BERNSTEIN_NORMALIZATION "Use Bernstein polynomial evaluation (numerically stable, bfloat16-ready)" OFF)
+if (USE_BERNSTEIN_NORMALIZATION)
+  message(STATUS "USE_BERNSTEIN_NORMALIZATION=ON")
+  add_definitions(-DUSE_BERNSTEIN_NORMALIZATION)
+endif()
+
 option(USE_RECORDER "Use recorder" OFF)
 set(recorder_file ${recorder_file})
 if (USE_RECORDER)
